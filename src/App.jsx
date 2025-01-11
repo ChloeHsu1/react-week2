@@ -6,11 +6,14 @@ const BASE_URL = import.meta.env.VITE_BASE_URL;
 const API_PATH = import.meta.env.VITE_API_PATH;
 
 function App() {
+  //設定登入狀態(預設false，登入成功改成true) 
+  //登入後，使用三元運算子切換頁面
   const [isAuth, setIsAuth] = useState(false);
 
   const [tempProduct, setTempProduct] = useState({});
   const [products, setProducts] = useState([]);
 
+  //設定登入帳密的Hook(useState)
   const [account, setAccount] = useState({
       username: "example@test.com",
       password: "example"
@@ -19,14 +22,19 @@ function App() {
   const handleInputChange = (e) => {
     const { value, name} = e.target;
 
+    //先展開(複製)所有內容，再改變input的值
     setAccount({
       ...account,
       [name]: value
     })
   }
 
+  //登入函式
   const handleLogin = (e) => {
+    //取消 form 表單的預設行為
     e.preventDefault();
+
+    //使用API取得登入資訊
     axios.post(`${BASE_URL}/v2/admin/signin`,
       account
     )
@@ -34,10 +42,10 @@ function App() {
         //使用解構從回傳的資料取得token及expired
         const { token, expired } = res.data;
 
-        //帶入cookie
+        //將token存進cookie
         document.cookie = `hexToken=${token}; expires=${new Date(expired)}`;
 
-        //帶入token
+        //在headers帶入token，在之後的axios發動請求後，都會帶上token
         axios.defaults.headers.common['Authorization'] = token;
 
         //使用API取得商品資料
@@ -50,6 +58,7 @@ function App() {
   }
 
   const checkUserLogin = () => {
+    //使用API驗證登入資訊
     axios.post(`${BASE_URL}/v2/api/user/check`)
       .then((res) => alert('使用者已登入'))
       .catch((error) => console.error(error))
