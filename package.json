@@ -1,6 +1,7 @@
 {
   "name": "react-week2",
   "private": true,
+  "homepage": "https://chloehsu1.github.io/react-week2/",
   "version": "0.0.0",
   "type": "module",
   "scripts": {
